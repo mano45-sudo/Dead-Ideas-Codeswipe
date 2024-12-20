@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #e0eafc, #cfdef3);
+        }
+        header {
+            background-color: #444;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+        }
+        main {
+            max-width: 600px;
+            margin: 2rem auto;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        form label {
+            margin-bottom: 0.5rem;
+        }
+        form input, form textarea {
+            margin-bottom: 1rem;
+            padding: 0.8rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        form button {
+            padding: 0.8rem;
+            background-color: #444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        form button:hover {
+            background-color: #81c784;
+        }
+        .error {
+            color: red;
+            font-size: 0.9rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>My Profile</h1>
+    </header>
+    <main>
+        <form id="profileForm">
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" required>
+
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" required>
+
+            <label for="username">Username</label>
+            <input type="text" id="username" required>
+            <p class="error" id="usernameError">Username is already taken</p>
+
+            <label for="password">Password</label>
+            <input type="password" id="password" required>
+
+            <label for="bio">Bio</label>
+            <textarea id="bio" rows="4" required></textarea>
+
+            <label for="domain">Interested Domain</label>
+            <input type="text" id="domain" required>
+
+            <label for="skills">Skills</label>
+            <input type="text" id="skills" required>
+
+            <button type="submit">Update Profile</button>
+        </form>
+    </main>
+
+    <script>
+        const form = document.getElementById('profileForm');
+        const usernameError = document.getElementById('usernameError');
+
+        // Retrieve logged-in user and profiles
+        const loggedInUsername = localStorage.getItem('loggedInUser');
+        const profiles = JSON.parse(localStorage.getItem('profiles')) || [];
+
+        const currentUser = profiles.find(profile => profile.username === loggedInUsername);
+
+        if (currentUser) {
+            // Populate form fields with user data
+            document.getElementById('firstName').value = currentUser.firstName;
+            document.getElementById('lastName').value = currentUser.lastName;
+            document.getElementById('username').value = currentUser.username;
+            document.getElementById('password').value = currentUser.password;
+            document.getElementById('bio').value = currentUser.bio;
+            document.getElementById('domain').value = currentUser.favoriteDomain;
+            document.getElementById('skills').value = currentUser.skills;
+        } else {
+            // Redirect back to login if no profile found
+            alert("No profile found. Please log in again.");
+            window.location.href = 'login.html';
+        }
+
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const updatedFirstName = document.getElementById('firstName').value;
+            const updatedLastName = document.getElementById('lastName').value;
+            const updatedUsername = document.getElementById('username').value;
+            const updatedPassword = document.getElementById('password').value;
+            const updatedBio = document.getElementById('bio').value;
+            const updatedDomain = document.getElementById('domain').value;
+            const updatedSkills = document.getElementById('skills').value;
+
+            // Check if the username is already taken by another profile
+            const usernameExists = profiles.some(
+                profile => profile.username === updatedUsername && profile.username !== loggedInUsername
+            );
+
+            if (usernameExists) {
+                usernameError.style.display = 'block';
+                return;
+            }
+
+            usernameError.style.display = 'none';
+
+            // Update current user profile
+            currentUser.firstName = updatedFirstName;
+            currentUser.lastName = updatedLastName;
+            currentUser.username = updatedUsername;
+            currentUser.password = updatedPassword;
+            currentUser.bio = updatedBio;
+            currentUser.favoriteDomain = updatedDomain;
+            currentUser.skills = updatedSkills;
+
+            // Update profiles in localStorage
+            localStorage.setItem('profiles', JSON.stringify(profiles));
+            localStorage.setItem('loggedInUser', updatedUsername); // Update logged-in username if it changes
+
+            alert("Profile updated successfully!");
+        });
+    </script>
+</body>
+</html>

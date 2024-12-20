@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #e0eafc, #cfdef3);
+        }
+        header {
+            background-color: #444;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+        }
+        main {
+            max-width: 600px;
+            margin: 2rem auto;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        form label {
+            margin-bottom: 0.5rem;
+        }
+        form input, form textarea, form select {
+            margin-bottom: 1rem;
+            padding: 0.8rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        form button {
+            padding: 0.8rem;
+            background-color: #444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        form button:hover {
+            background-color: #81c784;
+        }
+        .error {
+            color: red;
+            margin-top: -0.8rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Create a New Account</h1>
+    </header>
+    <main>
+        <form id="signupForm">
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" required>
+
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" required>
+
+            <label for="username">Username</label>
+            <input type="text" id="username" required>
+            <p class="error" id="usernameError" style="display: none;">Username already exists. Please choose another one.</p>
+
+            <label for="password">Password</label>
+            <input type="password" id="password" required>
+
+            <label for="bio">Bio</label>
+            <textarea id="bio" rows="4" required></textarea>
+
+            <label for="domain">Interested Domain</label>
+            <input type="text" id="domain" required>
+
+            <label for="skills">Skills</label>
+            <input type="text" id="skills" required>
+
+            <button type="submit">Create Account</button>
+        </form>
+    </main>
+
+    <script>
+        const form = document.getElementById('signupForm');
+        const usernameError = document.getElementById('usernameError');
+
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const bio = document.getElementById('bio').value;
+            const domain = document.getElementById('domain').value;
+            const skills = document.getElementById('skills').value;
+
+            // Retrieve existing profiles
+            const profiles = JSON.parse(localStorage.getItem('profiles')) || [];
+
+            // Check if username already exists
+            const usernameExists = profiles.some(profile => profile.username === username);
+
+            if (usernameExists) {
+                usernameError.style.display = 'block';
+                return;
+            }
+
+            usernameError.style.display = 'none';
+
+            // Create new profile
+            const newProfile = {
+                firstName,
+                lastName,
+                username,
+                password,
+                bio,
+                favoriteDomain: domain,
+                skills,
+            };
+
+            // Save the new profile
+            profiles.push(newProfile);
+            localStorage.setItem('profiles', JSON.stringify(profiles));
+
+            // Save success message to localStorage
+            localStorage.setItem('signupMessage', 'Account created successfully');
+
+            // Redirect to frontpage.html
+            window.location.href = 'frontpage.html';
+        });
+    </script>
+</body>
+</html>

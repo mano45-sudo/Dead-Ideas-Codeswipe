@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Content</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #e0eafc, #cfdef3);
+        }
+        header {
+            background-color: #444;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+        main {
+            padding: 2rem;
+        }
+        .profile {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        .profile h2 {
+            margin-top: 0;
+            color: #444;
+        }
+        .profile p {
+            margin: 0.5rem 0;
+        }
+        .delete-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .delete-btn:hover {
+            background-color: #e60000;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>All Profiles</h1>
+    </header>
+    <main id="profileContainer">
+        <!-- Profiles will be loaded here -->
+    </main>
+
+    <script>
+        // Load profiles from localStorage and display them
+        const loadProfiles = () => {
+            const profiles = JSON.parse(localStorage.getItem('profiles')) || [];
+            const profileContainer = document.getElementById('profileContainer');
+
+            if (profiles.length === 0) {
+                profileContainer.innerHTML = '<p>No profiles available. Please create one!</p>';
+                return;
+            }
+
+            profileContainer.innerHTML = profiles.map((profile, index) => `
+                <div class="profile" data-index="${index}">
+                    <h2>${profile.firstName} ${profile.lastName}</h2>
+                    <p><strong>Username:</strong> ${profile.username}</p>
+                    <p><strong>Bio:</strong> ${profile.bio}</p>
+                    <p><strong>Skills:</strong> ${profile.skills}</p>
+                    <p><strong>Favorite Domain:</strong> ${profile.favoriteDomain}</p>
+                    <button class="delete-btn" onclick="deleteProfile(${index})">Delete</button>
+                </div>
+            `).join('');
+        };
+
+        // Delete a profile by index
+        const deleteProfile = (index) => {
+            const profiles = JSON.parse(localStorage.getItem('profiles')) || [];
+            profiles.splice(index, 1); // Remove the profile at the specified index
+            localStorage.setItem('profiles', JSON.stringify(profiles)); // Update localStorage
+            loadProfiles(); // Refresh the displayed profiles
+        };
+
+        // Load profiles on page load
+        window.onload = loadProfiles;
+    </script>
+</body>
+</html>
